@@ -3,6 +3,7 @@ package com.webserver.parser;
 import com.webserver.HTTPRequest;
 import com.webserver.RequestType;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +18,8 @@ public class HTTPRequestParser {
 
     public static HTTPRequest parse(InputStream inputStream) throws IOException {
 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String requestLine;
+        InputStream bufferedReader = inputStream;
+        String requestLine = "";
 
         RequestType requestType = null;
         String target = "";
@@ -30,7 +31,17 @@ public class HTTPRequestParser {
         // Check first line
         boolean firstLine = true;
 
-        while (!Objects.equals(requestLine = bufferedReader.readLine(), "")) {
+        while (true) {
+            int r = bufferedReader.read();
+            if (r == 10) {
+                requestLine = requestLine.trim();
+                if ("".equals(requestLine)) {
+                    break;
+                }
+            } else {
+                requestLine += (char) r;
+                continue;
+            }
             String[] parts;
             if (firstLine) {
                 parts = requestLine.split(" ");
@@ -59,6 +70,7 @@ public class HTTPRequestParser {
                     headers.put(parts[0], parts[1].substring(1));
                 }
             }
+            requestLine = "";
         }
 
         return new HTTPRequest(requestType, target, httpVersion, queryParameters, headers, cookies, inputStream);
