@@ -56,7 +56,7 @@ public class HTTPRequestParser {
                         cookies.put(cookie.split("=")[0], cookie.split("=")[1]);
                     }
                 } else {
-                    headers.put(parts[0], parts[1]);
+                    headers.put(parts[0], parts[1].substring(1));
                 }
             }
         }

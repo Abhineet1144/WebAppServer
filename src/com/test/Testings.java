@@ -7,12 +7,20 @@ import java.util.HashMap;
 import com.webserver.HTTPRequest;
 import com.webserver.HTTPResponse;
 import com.webserver.parser.HTTPRequestParser;
+import com.webserver.stream.HTTPInputStream;
 
 public class Testings {
     public static void main(String[] args) throws IOException {
         ServerSocket socket = new ServerSocket(1234);
         var client = socket.accept();
         HTTPRequest httpRequest = HTTPRequestParser.parse(client.getInputStream());
+        HTTPInputStream httpInputStream = new HTTPInputStream(httpRequest.getBody(), Integer.parseInt(httpRequest.getHeaders().get("Content-Length")));
+
+        int i;
+        while ((i = httpInputStream.read()) != -1) {
+            System.out.print((char) i);
+        }
+
         System.out.println(httpRequest);
         HTTPResponse resp = new HTTPResponse(httpRequest, 200, "OK", new HashMap<>(), client.getOutputStream());
         resp.getSingleUseStream().print("Hello browser");
