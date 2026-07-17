@@ -60,9 +60,9 @@ public class HTTPRequest {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append("RequestType: ").append(requestType).append("target: ").append(target).append("httpVersion: ")
-                .append(httpVersion).append("host: ").append(host).append("queryParams: ").append(queryParams)
-                .append("headers: ").append(headers).append("headers: ").append(cookies);
+        str.append("RequestType: ").append(requestType).append("\ntarget: ").append(target).append("\nhttpVersion: ")
+                .append(httpVersion).append("\nhost: ").append(host).append("\nqueryParams: ").append(queryParams)
+                .append("\nheaders: ").append(headers).append("\nCookies: ").append(cookies);
         return str.toString();
     }
 }
