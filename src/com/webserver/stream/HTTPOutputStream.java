@@ -1,8 +1,12 @@
 package com.webserver.stream;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.commons.io.IOUtils;
 
 import com.webserver.HTTPResponse;
 import com.webserver.parser.HTTPResponseFormatter;
@@ -23,6 +27,20 @@ public class HTTPOutputStream extends BufferedOutputStream {
         return new HTTPOutputStream(resp.getOutputStream(), resp,  true);
     }
 
+    public void sendFile(File file) throws IOException {
+        if (used && isSingleUse) {
+            throw new IllegalStateException("Output stream used more than once in single use mode");
+        }
+        if (isSingleUse) {
+            resp.setHeader("Content-Length", file.length() + "");
+            write(HTTPResponseFormatter.formatResponse(resp).getBytes());
+            write(10);
+            IOUtils.copy(new FileInputStream(file), this);
+            used = true;
+            flush();
+        }
+    }
+
     public void print(String content) throws IOException {
         if (used && isSingleUse) {
             throw new IllegalStateException("Output stream used more than once in single use mode");
@@ -37,7 +55,5 @@ public class HTTPOutputStream extends BufferedOutputStream {
         }
     }
 
-    public void sendFile() {
 
-    }
 }

@@ -7,10 +7,11 @@ import com.webserver.stream.HTTPOutputStream;
 
 public class HTTPResponse {
     private final HTTPRequest request;
-    private final int statusCode;
-    private final String statusPhrase;
     private final Map<String, String> headers;
     private final OutputStream out;
+
+    private int statusCode;
+    private String statusPhrase;
 
     public HTTPResponse(HTTPRequest request, int statusCode, String statusPhrase, Map<String, String> headers,
             OutputStream out) {
@@ -42,8 +43,7 @@ public class HTTPResponse {
     }
 
     public HTTPOutputStream getSingleUseStream() {
-        HTTPOutputStream out = HTTPOutputStream.getSingleUseOutputStream(this);
-        return out;
+        return HTTPOutputStream.getSingleUseOutputStream(this);
     }
 
     public OutputStream getOutputStream() {
