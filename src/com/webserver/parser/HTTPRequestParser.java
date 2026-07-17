@@ -25,6 +25,7 @@ public class HTTPRequestParser {
         String httpVersion = "";
         Map<String, String> queryParameters = new HashMap<>();
         Map<String, String> headers = new HashMap<>();
+        Map<String, String> cookies = new HashMap<>();
 
         // Check first line
         boolean firstLine = true;
@@ -50,12 +51,17 @@ public class HTTPRequestParser {
                 }
             } else {
                 parts = requestLine.split(":");
-                headers.put(parts[0], parts[1]);
+                if (parts[0].equals("Cookie")) {
+                    for (String cookie : parts[1].split(";")) {
+                        cookies.put(cookie.split("=")[0], cookie.split("=")[1]);
+                    }
+                } else {
+                    headers.put(parts[0], parts[1]);
+                }
             }
         }
 
-        return new HTTPRequest(requestType, target, httpVersion, queryParameters, headers, new HashMap<>(),
-                inputStream);
+        return new HTTPRequest(requestType, target, httpVersion, queryParameters, headers, cookies, inputStream);
 
         // TODO: Add Transfer-Encoding: chunked later
     }
