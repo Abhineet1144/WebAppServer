@@ -8,19 +8,18 @@ public class HTTPRequest {
     private final RequestType requestType;
     private final String target;
     private final String httpVersion;
-    private final String host;
-    private final Map<String, String> queryParam;
+    private final String host = null;
+    private final Map<String, String> queryParams;
     private final Map<String, String> headers;
     private final Map<String, String> cookies;
     private final InputStream body;
 
-    public HTTPRequest(RequestType requestType, String target, String httpVersion, String host, Map<String, String> queryParam,
+    public HTTPRequest(RequestType requestType, String target, String httpVersion, Map<String, String> queryParams,
             Map<String, String> headers, Map<String, String> cookies, InputStream body) {
         this.requestType = requestType;
         this.target = target;
         this.httpVersion = httpVersion;
-        this.host = host;
-        this.queryParam = queryParam;
+        this.queryParams = queryParams;
         this.headers = headers;
         this.cookies = cookies;
         this.body = body;
@@ -50,12 +49,20 @@ public class HTTPRequest {
         return cookies;
     }
 
-    public Map<String, String> getQueryParam() {
-        return queryParam;
+    public Map<String, String> getQueryParams() {
+        return queryParams;
     }
 
     public InputStream getBody() {
         return body;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        str.append("RequestType: ").append(requestType).append("target: ").append(target).append("httpVersion: ")
+                .append(httpVersion).append("host: ").append(host).append("queryParams: ").append(queryParams)
+                .append("headers: ").append(headers).append("headers: ").append(cookies);
+        return str.toString();
+    }
 }
