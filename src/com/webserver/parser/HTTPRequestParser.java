@@ -3,12 +3,15 @@ package com.webserver.parser;
 import com.webserver.HTTPRequest;
 import com.webserver.RequestType;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +37,7 @@ public class HTTPRequestParser {
         // Check first line
         boolean firstLine = true;
 
-        while (true) {
-            int r = bufferedReader.read();
-            if (r == 10) {
-                requestLine = requestLine.trim();
-                if ("".equals(requestLine)) {
-                    break;
-                }
-            } else {
-                requestLine += (char) r;
-                continue;
-            }
+        while ((requestLine = readHttpLine(bufferedReader)) != null && !requestLine.isEmpty()) {
             String[] parts;
             if (firstLine) {
                 parts = requestLine.split(" ");
@@ -73,11 +66,33 @@ public class HTTPRequestParser {
                     headers.put(parts[0], parts[1].substring(1));
                 }
             }
-            requestLine = "";
         }
 
         return new HTTPRequest(requestType, target, httpVersion, queryParameters, headers, cookies, inputStream);
 
         // TODO: Add Transfer-Encoding: chunked later
+    }
+
+    private static String readHttpLine(InputStream input) throws IOException {
+        StringBuilder line = new StringBuilder();
+
+        while (true) {
+            int value = input.read();
+            if (value == -1) {
+                if (line.isEmpty()) {
+                    return null;
+                }
+            }
+            if (value == '\n') {
+                int length = line.length();
+
+                if (length > 0 && line.charAt(length - 1) == '\r') {
+                    line.deleteCharAt(length - 1);
+                }
+
+                return line.toString();
+            }
+            line.append((char) value);
+        }
     }
 }
