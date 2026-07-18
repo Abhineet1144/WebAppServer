@@ -10,17 +10,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webserver.parser.HTTPRequestParser;
+import com.webserver.servlet.ServletMapper;
 
 public class HTTPServer {
 
-    private static int port = 8080;
-    private static ExecutorService threadPool;
-    private static ServerSocket socket;
-    private static volatile boolean running;
+    private int port;
+    private ExecutorService threadPool;
+    private ServerSocket socket;
+    private volatile boolean running;
+    public ServletMapper servletMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(HTTPRequestParser.class);
 
-    protected static void start() {
+    public HTTPServer(int port) {
+        this.port = port;
+        servletMapper = new ServletMapper();
+    }
+
+    protected void start() {
         try {
             socket = new ServerSocket(port);
         } catch (IOException e) {
@@ -30,17 +37,22 @@ public class HTTPServer {
         running = true;
 
         logger.info("Server listening on port {}", port);
-        ;
 
         while (running) {
             try {
                 Socket client = socket.accept();
                 logger.debug("Accepted connection from {}:{}", client.getInetAddress().getHostAddress(),
                         client.getPort());
-                threadPool.submit(new HTTPRequestHandler(client));
+                threadPool.submit(new HTTPRequestHandler(client, servletMapper));
             } catch (IOException e) {
                 logger.error("Failed to accept client connection", e);
             }
         }
+    }
+
+    public void stop() throws IOException {
+        running = false;
+        socket.close();
+        threadPool.shutdown();
     }
 }

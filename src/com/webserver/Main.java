@@ -1,9 +1,16 @@
 package com.webserver;
 
 import java.io.IOException;
+import com.test.HelloServlet;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        HTTPServer.start();
+
+        HTTPServer server = new HTTPServer(8080);
+
+        server.servletMapper.addServlet("/hello", new HelloServlet());
+
+        server.start();
+
     }
 }
