@@ -6,12 +6,11 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.webserver.route.RequestRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webserver.parser.HTTPRequestParser;
-import com.webserver.servlet.HTTPServlet;
-import com.webserver.servlet.ServletMapper;
 
 public class HTTPServer {
 
@@ -19,17 +18,16 @@ public class HTTPServer {
     private ExecutorService threadPool;
     private ServerSocket socket;
     private volatile boolean running;
-    private ServletMapper servletMapper;
+    private RequestRouter requestRouter;
 
     private static final Logger logger = LoggerFactory.getLogger(HTTPRequestParser.class);
 
     public HTTPServer(int port) {
         this.port = port;
-        servletMapper = new ServletMapper();
     }
 
-    public void addServlet(String path, HTTPServlet servlet) {
-        servletMapper.addServlet(path, servlet);
+    public void setRequestRouter(RequestRouter requestRouter) {
+        this.requestRouter = requestRouter;
     }
 
     protected void start() {
@@ -48,7 +46,7 @@ public class HTTPServer {
                 Socket client = socket.accept();
                 logger.debug("Accepted connection from {}:{}", client.getInetAddress().getHostAddress(),
                         client.getPort());
-                threadPool.submit(new HTTPRequestHandler(client, servletMapper));
+                threadPool.submit(new HTTPRequestHandler(client, requestRouter));
             } catch (IOException e) {
                 logger.error("Failed to accept client connection", e);
             }

@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import com.webserver.HTTPRequest;
 import com.webserver.HTTPResponse;
-import com.webserver.servlet.BaseHTTPServlet;
+import com.webserver.handler.BaseHTTPHandler;
 import com.webserver.stream.HTTPInputStream;
 
-public class HelloServlet extends BaseHTTPServlet {
+public class HelloServlet extends BaseHTTPHandler {
 
-    String hello = "";
+    String hello = "hello";
 
     @Override
     protected void doPost(HTTPRequest request, HTTPResponse response) throws IOException {

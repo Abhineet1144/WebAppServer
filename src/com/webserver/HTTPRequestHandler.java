@@ -6,22 +6,22 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.webserver.handler.BaseHTTPHandler;
+import com.webserver.route.RequestRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webserver.parser.HTTPRequestParser;
-import com.webserver.servlet.HTTPServlet;
-import com.webserver.servlet.ServletMapper;
 
 public class HTTPRequestHandler implements Runnable {
     private final Socket client;
-    private final ServletMapper servletMapper;
+    private final RequestRouter requestRouter;
 
     private static final Logger logger = LoggerFactory.getLogger(HTTPRequestHandler.class);
 
-    HTTPRequestHandler(Socket client, ServletMapper servletMapper) {
+    HTTPRequestHandler(Socket client, RequestRouter servletMapper) {
         this.client = client;
-        this.servletMapper = servletMapper;
+        this.requestRouter = servletMapper;
     }
 
     @Override
@@ -34,8 +34,7 @@ public class HTTPRequestHandler implements Runnable {
 
             HTTPResponse response = new HTTPResponse(request, 200, "OK", respHeaders, client.getOutputStream());
 
-            HTTPServlet servlet = servletMapper.findServlet(request.getTarget());
-            if (servlet != null) servlet.service(request, response);
+            requestRouter.getRouteOrder(request.getTarget()).startNextHandler(request, response);
 
         } catch (IOException e) {
             logger.error("Unexpected error while handling {}", client.getRemoteSocketAddress(), e);

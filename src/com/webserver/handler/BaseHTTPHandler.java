@@ -1,23 +1,23 @@
-package com.webserver.servlet;
+package com.webserver.handler;
 
 import java.io.IOException;
 
 import com.webserver.HTTPRequest;
 import com.webserver.HTTPResponse;
 
-public abstract class BaseHTTPServlet implements HTTPServlet {
-    @Override
+public class BaseHTTPHandler {
     public void service(HTTPRequest request, HTTPResponse response) throws IOException {
 
         switch (request.getRequestType()) {
-        case GET -> doGet(request, response);
         case POST -> doPost(request, response);
         case PUT -> doPut(request, response);
         case DELETE -> doDelete(request, response);
+        default -> doGet(request, response);
         }
     }
 
     protected void doGet(HTTPRequest request, HTTPResponse response) throws IOException {
+        response.getSingleUseStream().print("404 Not Found");
         // TODO: add error statement
     }
 
