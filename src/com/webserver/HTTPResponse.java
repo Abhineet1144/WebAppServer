@@ -30,6 +30,10 @@ public class HTTPResponse {
         return statusCode;
     }
 
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public String getStatusPhrase() {
         return statusPhrase;
     }

@@ -8,9 +8,10 @@ public class Main {
 
         HTTPServer server = new HTTPServer(8080);
 
-        server.servletMapper.addServlet("/hello", new HelloServlet());
+        server.addServlet("/hello", new HelloServlet());
 
         server.start();
 
+        server.stop();
     }
 }
