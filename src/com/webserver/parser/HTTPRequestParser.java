@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.webserver.component.Headers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ public class HTTPRequestParser {
         String target = "";
         String httpVersion = "";
         Map<String, String> queryParameters = new HashMap<>();
-        Map<String, String> headers = new HashMap<>();
+        Headers headers = new Headers();
         Map<String, String> cookies = new HashMap<>();
 
         // Check first line
@@ -60,17 +61,15 @@ public class HTTPRequestParser {
                         cookies.put(cookie.split("=")[0], cookie.split("=")[1]);
                     }
                 } else {
-                    headers.put(parts[0], parts[1].substring(1));
+                    headers.setHeader(parts[0], parts[1].substring(1));
                 }
             }
         }
 
         return new HTTPRequest(requestType, target, httpVersion, queryParameters, headers, cookies, inputStream);
-
-        // TODO: Add Transfer-Encoding: chunked later
     }
 
-    private static String readHttpLine(InputStream input) throws IOException {
+    public static String readHttpLine(InputStream input) throws IOException {
         StringBuilder line = new StringBuilder();
 
         while (true) {

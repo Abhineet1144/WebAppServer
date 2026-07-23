@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.webserver.component.Headers;
 import com.webserver.handler.BaseHTTPHandler;
 import com.webserver.route.RequestRouter;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class HTTPRequestHandler implements Runnable {
     @Override
     public void run() {
         try {
-            Map<String, String> respHeaders = new HashMap<>();
+            Headers respHeaders = new Headers();
             HTTPRequest request = HTTPRequestParser.parse(new BufferedInputStream(client.getInputStream()));
             logger.info("{} {} from {}", request.getRequestType(), request.getTarget(),
                     client.getInetAddress().getHostAddress());

@@ -1,5 +1,8 @@
 package com.webserver;
 
+import com.webserver.component.Headers;
+import com.webserver.stream.HTTPChunkedInputStream;
+
 import java.io.InputStream;
 import java.util.Map;
 
@@ -10,12 +13,12 @@ public class HTTPRequest {
     private final String httpVersion;
     private final String host = null;
     private final Map<String, String> queryParams;
-    private final Map<String, String> headers;
+    private final Headers headers;
     private final Map<String, String> cookies;
     private final InputStream body;
 
     public HTTPRequest(RequestType requestType, String target, String httpVersion, Map<String, String> queryParams,
-            Map<String, String> headers, Map<String, String> cookies, InputStream body) {
+            Headers headers, Map<String, String> cookies, InputStream body) {
         this.requestType = requestType;
         this.target = target;
         this.httpVersion = httpVersion;
@@ -41,7 +44,7 @@ public class HTTPRequest {
         return host;
     }
 
-    public Map<String, String> getHeaders() {
+    public Headers getHeaders() {
         return headers;
     }
 
@@ -54,6 +57,9 @@ public class HTTPRequest {
     }
 
     public InputStream getBody() {
+        if (headers.getHeader("Transfer-Encoding").equals("chunked")) {
+            return new HTTPChunkedInputStream(body);
+        }
         return body;
     }
 

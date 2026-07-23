@@ -11,9 +11,7 @@ public class HTTPResponseFormatter {
         StringBuilder responseStr = new StringBuilder();
         responseStr.append(HTTP_PREFIX).append(response.getRequest().getHttpVersion()).append(" ").append(response.getStatusCode())
                 .append(" ").append(response.getStatusPhrase()).append("\n");
-        for (Entry<String, String> headerEntry : response.getHeaders().entrySet()) {
-            responseStr.append(headerEntry.getKey()).append(": ").append(headerEntry.getValue()).append("\n");
-        }
+        responseStr.append(response.getHeaders().toString());
         return responseStr.toString();
     }
 }

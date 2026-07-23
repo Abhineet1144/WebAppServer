@@ -3,17 +3,18 @@ package com.webserver;
 import java.io.OutputStream;
 import java.util.Map;
 
+import com.webserver.component.Headers;
 import com.webserver.stream.HTTPOutputStream;
 
 public class HTTPResponse {
     private final HTTPRequest request;
-    private final Map<String, String> headers;
+    private final Headers headers;
     private final OutputStream out;
 
     private int statusCode;
     private String statusPhrase;
 
-    public HTTPResponse(HTTPRequest request, int statusCode, String statusPhrase, Map<String, String> headers,
+    public HTTPResponse(HTTPRequest request, int statusCode, String statusPhrase, Headers headers,
             OutputStream out) {
         this.request = request;
         this.statusCode = statusCode;
@@ -38,12 +39,12 @@ public class HTTPResponse {
         return statusPhrase;
     }
 
-    public Map<String, String> getHeaders() {
+    public Headers getHeaders() {
         return headers;
     }
 
     public void setHeader(String key, String value) {
-        headers.put(key, value);
+        headers.setHeader(key, value);
     }
 
     public HTTPOutputStream getSingleUseStream() {
